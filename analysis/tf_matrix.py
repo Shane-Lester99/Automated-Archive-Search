@@ -17,31 +17,52 @@ def transformListToDict(array):
     # Data structure of {doc_id -> amount of words}
     amountOfWordsPerDoc = dict(documentSplit.map(lambda x: (x[1], len(x[0]))).collect())
 
+    normalize = lambda x: (normalizedWords(x[0]), x[1])
+
+    #pair =  list(filter(lambda x: x[0] != [], normalize(pair)))
+
+    reverse = lambda x: [(i, x[1]) for i in x[0]]
+    pair = normalize(pair)
+#    return pair
+    pair = reverse(pair)
+
+def amountOfWordsMap(pair):
+    normalize = lambda x: (normalizedWords(x[0]), x[1])
+    reverse = lambda x: (x[1], len(x[0]))
+    return reverse(normalize(pair))
+
+def createTfValue(pair, dictCounts):
+    newVal = dict([(k, pair[1][k] / dictCounts[k]) for (k,v) in pair[1].items()])
+    return (pair[0], newVal)
 
 
 # Input a text file -> output the tFmatrix
 def makeTfMatrix(sc, textFile, baseDataStructure):
     newRdd = loadToConvenienceRdd(sc, textFile)
-    documentSplit = newRdd.map(lambda x: (normalizedWords(x[0]), x[1])).filter(lambda x: x[0] != []) 
-
-
-    amountOfWordsPerDoc = documentSplit.map(lambda x: (x[1], len(x[0]))
+    inMemoryDataStructure = dict(newRdd.map(lambda x: amountOfWordsMap(x)).collect())
+    rc = baseDataStructure.map(lambda x: createTfValue(x, inMemoryDataStructure))
     
-
-
-    # Data structure of {doc_id -> amount of words}
-    amountOfWordsPerDoc = dict(documentSplit.map(lambda x: (x[1], len(x[0]))).collect())
-# 
-    def createTf(wordDict):
-        for (k, v) in wordDict.items():
-            wordDict[k] = v / amountOfWordsPerDoc[k]
-        return wordDict
+    return rc 
+#    documentSplit = newRdd.map(lambda x: (normalizedWords(x[0]), x[1])).filter(lambda x: x[0] != []) 
 #
+#
+#    amountOfWordsPerDoc = documentSplit.map(lambda x: (x[1], len(x[0]))
 #    
 #
-##    # tF Matrix
-    tfMatrix = baseDataStructure.map(lambda x: (x[0], createTf(x[1])))
-    return tfMatrix
+#
+#    # Data structure of {doc_id -> amount of words}
+#    amountOfWordsPerDoc = dict(documentSplit.map(lambda x: (x[1], len(x[0]))).collect())
+## 
+#    def createTf(wordDict):
+#        for (k, v) in wordDict.items():
+#            wordDict[k] = v / amountOfWordsPerDoc[k]
+#        return wordDict
+##
+##    
+##
+###    # tF Matrix
+#    tfMatrix = baseDataStructure.map(lambda x: (x[0], createTf(x[1])))
+#    return tfMatrix
 #
 
 

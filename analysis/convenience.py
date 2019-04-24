@@ -35,17 +35,17 @@ def indexValues(pair):
     pair = reverse(pair)
     return pair
 
-def to_list(a):
+def toDict(a):
     return {a: 1}
 
-def append(a, b):
+def addKey(a, b):
     if b in a.keys():
         a[b] += 1
     else:
         a[b] = 1
     return a
 
-def extend(a, b):
+def stop(a, b):
     a
     return a
 
@@ -55,7 +55,7 @@ def makeWordToDocDataStructure(sc, textFile):
     newRdd =  sc.textFile(textFile).zipWithIndex() 
     dc = newRdd.map(lambda x: indexValues(x)).reduce(lambda x,y: x +y)    
     dc = sc.parallelize(dc)  
-    dc = dc.combineByKey(to_list, append, extend)
+    dc = dc.combineByKey(toDict, addKey, stop)
     #.reduce(lambda x,y: x + y) 
     #dc = dc.reduceByKey(lambda x,y: :
     return dc

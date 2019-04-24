@@ -3,8 +3,8 @@
 from plumbum import local, cli
 import sys
 sys.path.append(local.path(__file__).dirname.up())
-#from tf_matrix import makeTfMatrix
-#from idf_matrix import makeIdfMatrix
+from tf_matrix import makeTfMatrix
+from idf_matrix import makeIdfMatrix
 from pyspark import SparkConf, SparkContext
 from convenience import *
 
@@ -26,9 +26,9 @@ if __name__ == '__main__':
     sc = initApp('local','Semantic Similarity')
     files = ['../test/medium_file.txt', '../test/small_file.txt']
     baseDataStructure = makeWordToDocDataStructure(sc, files[1])
-    #tfMatrix =  makeTfMatrix(sc, files[1], baseDataStructure) 
+    tfMatrix =  makeTfMatrix(sc, files[1], baseDataStructure) 
     #AprintRdd(tfMatrix)
-    #idfMatrix = makeIdfMatrix(sc, files[1])
-    #`printRdd(tfMatrix)
-    printRdd(baseDataStructure)
+    idfMatrix = makeIdfMatrix(sc, files[1], baseDataStructure)
+    printRdd(idfMatrix)
+#    printRdd(baseDataStructure)
 
