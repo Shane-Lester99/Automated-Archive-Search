@@ -5,6 +5,7 @@ import sys
 sys.path.append(local.path(__file__).dirname.up())
 from tf_matrix import makeTfMatrix
 from idf_matrix import makeIdfMatrix
+from compute_semantic_similarity import multTfIdf
 from pyspark import SparkConf, SparkContext
 from convenience import *
 
@@ -29,6 +30,7 @@ if __name__ == '__main__':
     tfMatrix =  makeTfMatrix(sc, files[1], baseDataStructure) 
     #AprintRdd(tfMatrix)
     idfMatrix = makeIdfMatrix(sc, files[1], baseDataStructure)
-    printRdd(idfMatrix)
+    mult = multTfIdf(sc, tfMatrix, idfMatrix)
+    printRdd(mult)
 #    printRdd(baseDataStructure)
 

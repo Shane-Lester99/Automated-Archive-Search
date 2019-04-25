@@ -11,6 +11,7 @@ from create_analysis import initApp
 from convenience import makeWordToDocDataStructure, whitespace
 from tf_matrix import makeTfMatrix
 from idf_matrix import makeIdfMatrix
+from compute_semantic_similarity import multTfIdf
 dataLink = os.path.join(local.path(__file__).dirname, '..','test', 'small_file.txt')
 #dataLink = './small_file.txt'
 
@@ -54,6 +55,8 @@ def testTfMatrix():
 
 def testIdfMatrix():
     idfMatrixSmall = makeIdfMatrix(sc, dataLink, makeWordToDocDataStructure(sc, dataLink))
+   
+
     testVal =  [('i', {0: math.log10(3/3), 1: math.log10(3/3) }), ('like', {0: math.log10(3/1)}), ('data', {0: math.log10(3/2), 1: math.log10(3/2) }), ('science', {0: math.log10(3/1)}), ('and', {0: math.log10(3/1)}), ('hate', {1: math.log10(3/1)}), ('want', {2: math.log10(3/1)}), ('a', {2: math.log10(3/1)})]
     success = idfMatrixSmall.collect() == testVal
     if success:
@@ -64,8 +67,23 @@ def testIdfMatrix():
                 '\nTest: ', testVal, '\nReal: ', idfMatrixSmall.collect(),
          '\n\n\n\n')
 
+def testMultMatrix():
+    idfMatrixSmall = makeIdfMatrix(sc, dataLink, makeWordToDocDataStructure(sc, dataLink))
+    tfMatrixSmall = makeTfMatrix(sc, dataLink, makeWordToDocDataStructure(sc, dataLink))
+    mult = multTfIdf(sc, tfMatrixSmall, idfMatrixSmall)
+    testVal =  [('i', {0: 0.3333333333333333 * math.log10(3/3), 1: 0.3333333333333333 * math.log10(3/3) }), ('like', {0: 0.16666666666666666 * math.log10(3/1)}), ('data', {0: 0.16666666666666666 * math.log10(3/2), 1: 0.3333333333333333 * math.log10(3/2) }), ('science', {0:  0.16666666666666666 * math.log10(3/1)}), ('and', {0: 0.16666666666666666 * math.log10(3/1)}), ('hate', {1: 0.3333333333333333 * math.log10(3/1)}), ('want', {2: 0.5 * math.log10(3/1)}), ('a', {2: 0.5 * math.log10(3/1)})]
+    
+    success = mult.collect().sort() == testVal.sort()
+    if success:
+        print('\n\n\n\n', 'Test for tf*idf matrix', success,
+         '\n\n\n\n')
+    else:
+        print('\n\n\n\n', 'Test for tf*idf matrix', success,
+                '\nTest: ', testVal.sort(), '\nReal: ', mult.collect().sort(),
+         '\n\n\n\n')
 
 if __name__ == '__main__':
     testConvDataStructure()
     testTfMatrix()
     testIdfMatrix()
+    testMultMatrix()
