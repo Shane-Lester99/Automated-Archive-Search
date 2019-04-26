@@ -11,7 +11,7 @@ from create_analysis import initApp
 from convenience import makeWordToDocDataStructure, whitespace
 from tf_matrix import makeTfMatrix
 from idf_matrix import makeIdfMatrix
-from compute_semantic_similarity import multTfIdf
+from compute_semantic_similarity import multTfIdf, computeSemanticSimilarity
 dataLink = os.path.join(local.path(__file__).dirname, '..','test', 'small_file.txt')
 #dataLink = './small_file.txt'
 
@@ -82,8 +82,25 @@ def testMultMatrix():
                 '\nTest: ', testVal.sort(), '\nReal: ', mult.collect().sort(),
          '\n\n\n\n')
 
+def testSemSim():
+    item1 = {0: 0.044, 1: 0.059}
+    item2 = {0: 0.153, 2: 0.238}
+    testVal = (0.044*0.153+0.059*0.0+0.0*0.238) / (math.sqrt(0.044*0.044+0.059*0.059+0.0*0.0) * math.sqrt(0.153*0.153+0.0*0.0+0.238*0.238))
+    real = computeSemanticSimilarity(item1, item2, 3)
+    success = real == testVal
+    if success:
+        print('\n\n\n\n', 'Test for semantic similarity matrix', success, real,
+         '\n\n\n\n')
+    else:
+        print('\n\n\n\n', 'Test for semantic similarity matrix', success,
+                '\nTest: ', testVal, '\nReal: ', real,
+         '\n\n\n\n')
+
+
+
 if __name__ == '__main__':
     testConvDataStructure()
     testTfMatrix()
     testIdfMatrix()
     testMultMatrix()
+    testSemSim()

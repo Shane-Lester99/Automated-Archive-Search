@@ -1,3 +1,6 @@
+import math
+
+
 def passNow(pair):
     return pair
 
@@ -25,3 +28,21 @@ def multTfIdf(sc, tf, idf):
 
 
 # compute semantic similarity on matrix
+def computeSemanticSimilarity(item1, item2, termNum):
+    top, b1, b2 = 0, 0, 0
+    for i in range(termNum):
+        try:
+            item1[i]
+        except KeyError:
+            item1[i] = 0
+        try:
+            item2[i]
+        except KeyError:
+            item2[i] = 0
+        top += item1[i] * item2[i]
+        b1 += item1[i] * item1[i]
+        b2 += item2[i] * item2[i]
+    print(top, math.sqrt(b1), math.sqrt(b2))
+    return top / (math.sqrt(b1) * math.sqrt(b2)) 
+
+

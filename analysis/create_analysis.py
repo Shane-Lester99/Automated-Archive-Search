@@ -25,7 +25,7 @@ def initApp(master, name):
 
 if __name__ == '__main__':
     sc = initApp('local','Semantic Similarity')
-    files = ['../test/medium_file.txt', '../test/small_file.txt']
+    files = ['../test/medium_file.txt', '../test/small_file.txt', '../test/demo.txt']
     baseDataStructure = makeWordToDocDataStructure(sc, files[1])
     tfMatrix =  makeTfMatrix(sc, files[1], baseDataStructure) 
     #AprintRdd(tfMatrix)
