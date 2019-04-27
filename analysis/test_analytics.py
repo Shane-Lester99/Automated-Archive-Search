@@ -86,7 +86,7 @@ def testSemSim():
     item1 = {0: 0.044, 1: 0.059}
     item2 = {0: 0.153, 2: 0.238}
     testVal = (0.044*0.153+0.059*0.0+0.0*0.238) / (math.sqrt(0.044*0.044+0.059*0.059+0.0*0.0) * math.sqrt(0.153*0.153+0.0*0.0+0.238*0.238))
-    real = computeSemanticSimilarity(item1, item2, 3)
+    real = computeSemanticSimilarity(item1, item2)
     success = real == testVal
     if success:
         print('\n\n\n\n', 'Test for semantic similarity matrix', success, real,

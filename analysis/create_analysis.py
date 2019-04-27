@@ -2,12 +2,13 @@
 
 from plumbum import local, cli
 import sys
+import random
 import glob
 import time
 sys.path.append(local.path(__file__).dirname.up())
 from tf_matrix import makeTfMatrix
 from idf_matrix import makeIdfMatrix
-from compute_semantic_similarity import multTfIdf
+from compute_semantic_similarity import multTfIdf, computeSemanticSimilarity
 from pyspark import SparkConf, SparkContext
 from convenience import *
 
@@ -30,7 +31,7 @@ class SemanticSimilarity:
     def printMenu(self):
         print('Command List:\n'
               'text: will show all words to perform analysis on\n'
-              'retrievetop,<n>,<word>: will output the top n (only up to 5) most similar words desc\n'
+              'retrievetop,<num>,<word>: will output the top n most similar words descending with num of 25\n'
               'help: display this help menu\n')
 
     def showAllText(self, rdd):
@@ -38,24 +39,78 @@ class SemanticSimilarity:
         for i in items:
             print(i[0])
 
-    def retrieveTopN(self, num):
-        pass
+    def retrieveTopN(self, rdd, num, word):
+        def findWord(pair1, pair2):    
+            if pair1 and pair1[0] == word:
+                return pair1
+            elif pair2 and pair2[0] == word:
+                return pair2
+        def delWord(pair):
+            return pair
+                
+        def createAnalysis(searchWord, pair, small):
+            if small:
+                num = 1
+            else:
+                num = random.randint(1, 5)
+            return (num, (computeSemanticSimilarity(searchWord[1], pair[1]), pair[0])) 
+        def makeArray(a):
+            return [a]
+        def makePartition(a, b):
+            return a + [b]
+        def stop(a, b):
+            return (a + b)
+        newWord = rdd.reduce(lambda x, y: findWord(x,y))
+        if not newWord:
+            print('Word not found. Exiting')
+            return
+        whitespace(4)
+        wordAmount = len(rdd.collect())
+        smallAnalysis = True if wordAmount < 25 else False
+        if smallAnalysis:
+            semanticAnalysis = rdd.map(lambda x: createAnalysis(newWord, x, smallAnalysis))
+            s = semanticAnalysis.combineByKey(makeArray, makePartition, stop)
+            s = s.flatMap(lambda x: sorted(x[1], reverse = True)).collect()
+            print('Warning. Data batch is very small (under 25 words). Consider analyzing larger document.')
+        else:
+            s = rdd.flatMap(lambda x: sorted(x[1], reverse = True)[0:5])
+#        s = s.reduceByKey(lambda x, y: [x[1], y[1]])
+        #s = s.combineByKey(makeArray, makePartition, stop)
+        #s = s.map(lambda x: (x[0], sorted(x[1], reverse = True)))
+            s = sorted(s.collect(), reverse=True)
+       
+
+        if num > 25:
+            print('Truncating to top 25 matches from {0}.'.format(num))
+            num = 25
+        print('\nTop {0} Words similar to {1}:\n'.format(num if wordAmount > num else wordAmount, word))
+        i = 0
+        while i < num:
+            if wordAmount == i:
+                break
+            score, w = s[i]
+            if w == word:
+                num += 1
+                i += 1
+                continue
+            print('    Word `{0}` has a score of {1}'.format(w, score))
+            i += 1
+        return 
+ 
+#        sortedSemanticAnalysis = semanticAnalysis.combineBykey(lambda x, y: )
+        #print(s.collect())
+
 
     def __init__(self, filePath, command, num = None):
         sc = initApp('local','Semantic Similarity')
-#        files = ['../test/medium_file.txt', '../test/small_file.txt', '../test/demo.txt']
         if local.path(filePath).suffix != '.txt':
             raise ValueError('{0} is not a text file. Exiting'.format(filePath))
         print('Initializing calculation. Please wait')
         time.sleep(2)
         baseDataStructure = makeWordToDocDataStructure(sc, filePath)
         tfMatrix =  makeTfMatrix(sc, filePath, baseDataStructure) 
-        #AprintRdd(tfMatrix)
         idfMatrix = makeIdfMatrix(sc, filePath, baseDataStructure)
-        mult = multTfIdf(sc, tfMatrix, idfMatrix)
-        #printRdd(mult)
-        whitespace(4)
-        
+        mult = multTfIdf(sc, tfMatrix, idfMatrix) 
         if command == 'help':
             whitespace(4)
             self.printMenu()
@@ -65,8 +120,15 @@ class SemanticSimilarity:
             self.showAllText(mult)
             whitespace(4)
         elif re.search('retrievetop*', command):
-            print('TTTTTTTTTTTTTTTTT')
-             
+            try:
+               c, num, word = command.split(',')  
+               num = int(num)
+            except Exception as e:
+                raise e
+            word = word.lower()
+            whitespace(4)
+            self.retrieveTopN(mult,num, word)
+            whitespace(4)
         else: 
             whitespace(4)
             print('Invalid command\n')

@@ -28,7 +28,8 @@ def multTfIdf(sc, tf, idf):
 
 
 # compute semantic similarity on matrix
-def computeSemanticSimilarity(item1, item2, termNum):
+def computeSemanticSimilarity(item1, item2):
+    termNum = max(max(item1.keys()), max(item2.keys())) + 1
     top, b1, b2 = 0, 0, 0
     for i in range(termNum):
         try:
@@ -42,7 +43,9 @@ def computeSemanticSimilarity(item1, item2, termNum):
         top += item1[i] * item2[i]
         b1 += item1[i] * item1[i]
         b2 += item2[i] * item2[i]
-    print(top, math.sqrt(b1), math.sqrt(b2))
-    return top / (math.sqrt(b1) * math.sqrt(b2)) 
-
+    try:
+        result = top / (math.sqrt(b1) * math.sqrt(b2)) 
+    except ZeroDivisionError as e:
+        result = 0
+    return result
 
