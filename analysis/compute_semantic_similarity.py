@@ -4,14 +4,6 @@ import math
 def passNow(pair):
     return pair
 
-#def passAndMark(pair):
-#    return (pair[0], [pair[1], True])
-
-#def merge(x, y):
-#    top = x if isinstance(x[1], dict) else y 
-#    bottom = x if top is not x else y
-#    return 
-
 def merge(x, y):
     newDict = {}
     for (k, v) in x.items():
