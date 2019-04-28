@@ -1,5 +1,5 @@
 
-
+from datetime import datetime
 from plumbum import local, cli
 import sys
 import random
@@ -28,6 +28,8 @@ def initApp(master, name):
 
 class SemanticSimilarity: 
 
+    startTime = None
+
     def printMenu(self):
         print('Command List:\n'
               'text: will show all words to perform analysis on\n'
@@ -53,7 +55,7 @@ class SemanticSimilarity:
                 num = 1
             else:
                 num = random.randint(1, 5)
-            return (num, (computeSemanticSimilarity(searchWord[1], pair[1]), pair[0])) 
+            return (num, (computeSemanticSimilarity(searchWord[1], pair[1]), pair[0]))
         def makeArray(a):
             return [a]
         def makePartition(a, b):
@@ -65,43 +67,41 @@ class SemanticSimilarity:
             print('Word not found. Exiting')
             return
         whitespace(4)
-        wordAmount = len(rdd.collect())
+
+        wordAmount = rdd.collect()
+        wordAmount = len(wordAmount)
         smallAnalysis = True if wordAmount < 25 else False
+        semanticAnalysis = rdd.map(lambda x: createAnalysis(newWord, x, smallAnalysis))
+
+        #s = semanticAnalysis.combineByKey(makeArray, makePartition, stop)
+        s = semanticAnalysis.groupByKey()
         if smallAnalysis:
-            semanticAnalysis = rdd.map(lambda x: createAnalysis(newWord, x, smallAnalysis))
-            s = semanticAnalysis.combineByKey(makeArray, makePartition, stop)
             s = s.flatMap(lambda x: sorted(x[1], reverse = True)).collect()
             print('Warning. Data batch is very small (under 25 words). Consider analyzing larger document.')
         else:
-            s = rdd.flatMap(lambda x: sorted(x[1], reverse = True)[0:5])
-#        s = s.reduceByKey(lambda x, y: [x[1], y[1]])
-        #s = s.combineByKey(makeArray, makePartition, stop)
-        #s = s.map(lambda x: (x[0], sorted(x[1], reverse = True)))
+            s = s.flatMap(lambda x:  (sorted(x[1], reverse = True)[0:5]))
+            #s = s.reduceByKey(lambda x, y: sorted(x + y, reverse = True)[0:5])
+            #s = s.combineByKey(makeArray
+            #s1 = s.takeOrdered(5)
+            
             s = sorted(s.collect(), reverse=True)
-       
-
         if num > 25:
             print('Truncating to top 25 matches from {0}.'.format(num))
             num = 25
         print('\nTop {0} Words similar to {1}:\n'.format(num if wordAmount > num else wordAmount, word))
         i = 0
+        counter = 1
         while i < num:
             if wordAmount == i:
                 break
             score, w = s[i]
-            if w == word:
-                num += 1
-                i += 1
-                continue
-            print('    Word `{0}` has a score of {1}'.format(w, score))
+            print('    {0}) Word `{1}` has a score of {2}'.format(counter, w, score))
             i += 1
+            counter += 1
         return 
- 
-#        sortedSemanticAnalysis = semanticAnalysis.combineBykey(lambda x, y: )
-        #print(s.collect())
-
 
     def __init__(self, filePath, command, num = None):
+        self.startTime = datetime.now()
         sc = initApp('local','Semantic Similarity')
         if local.path(filePath).suffix != '.txt':
             raise ValueError('{0} is not a text file. Exiting'.format(filePath))
@@ -134,7 +134,7 @@ class SemanticSimilarity:
             print('Invalid command\n')
             self.printMenu()
             whitespace(4)
-
+        print('Program started at {0} and ended at {1}'.format(self.startTime, datetime.now()))
 
 #    printRdd(baseDataStructure)
 
