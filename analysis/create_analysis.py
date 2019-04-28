@@ -55,6 +55,7 @@ class SemanticSimilarity:
                 num = 1
             else:
                 num = random.randint(1, 5)
+            return (num, (c1(searchWord[1], pair[1]), pair[0]))
             return (num, (computeSemanticSimilarity(searchWord[1], pair[1]), pair[0]))
         def makeArray(a):
             return [a]
@@ -70,35 +71,37 @@ class SemanticSimilarity:
 
         wordAmount = rdd.collect()
         wordAmount = len(wordAmount)
-        smallAnalysis = True if wordAmount < 25 else False
-        semanticAnalysis = rdd.map(lambda x: createAnalysis(newWord, x, smallAnalysis))
+        
 
+        smallAnalysis = True if wordAmount < 25 else False
+        s = rdd.map(lambda x: createAnalysis(newWord, x, smallAnalysis))
+        print(s.collect())
         #s = semanticAnalysis.combineByKey(makeArray, makePartition, stop)
-        s = semanticAnalysis.groupByKey()
-        if smallAnalysis:
-            s = s.flatMap(lambda x: sorted(x[1], reverse = True)).collect()
-            print('Warning. Data batch is very small (under 25 words). Consider analyzing larger document.')
-        else:
-            s = s.flatMap(lambda x:  (sorted(x[1], reverse = True)[0:5]))
-            #s = s.reduceByKey(lambda x, y: sorted(x + y, reverse = True)[0:5])
-            #s = s.combineByKey(makeArray
-            #s1 = s.takeOrdered(5)
-            
-            s = sorted(s.collect(), reverse=True)
-        if num > 25:
-            print('Truncating to top 25 matches from {0}.'.format(num))
-            num = 25
-        print('\nTop {0} Words similar to {1}:\n'.format(num if wordAmount > num else wordAmount, word))
-        i = 0
-        counter = 1
-        while i < num:
-            if wordAmount == i:
-                break
-            score, w = s[i]
-            print('    {0}) Word `{1}` has a score of {2}'.format(counter, w, score))
-            i += 1
-            counter += 1
-        return 
+        #s = semanticAnalysis.groupByKey()
+#        if smallAnalysis:
+#            s = s.flatMap(lambda x: sorted(x[1], reverse = True)).collect()
+#            print('Warning. Data batch is very small (under 25 words). Consider analyzing larger document.')
+#        else:
+#            s = s.flatMap(lambda x:  (sorted(x[1], reverse = True)[0:5]))
+#            #s = s.reduceByKey(lambda x, y: sorted(x + y, reverse = True)[0:5])
+#            #s = s.combineByKey(makeArray
+#            #s1 = s.takeOrdered(5)
+#            
+#            s = sorted(s.collect(), reverse=True)
+#        if num > 25:
+#            print('Truncating to top 25 matches from {0}.'.format(num))
+#            num = 25
+#        print('\nTop {0} Words similar to {1}:\n'.format(num if wordAmount > num else wordAmount, word))
+#        i = 0
+#        counter = 1
+#        while i < num:
+#            if wordAmount == i:
+#                break
+#            score, w = s[i]
+#            print('    {0}) Word `{1}` has a score of {2}'.format(counter, w, score))
+#            i += 1
+#            counter += 1
+#        return 
 
     def __init__(self, filePath, command, num = None):
         self.startTime = datetime.now()

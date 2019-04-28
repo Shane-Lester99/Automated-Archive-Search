@@ -20,24 +20,47 @@ def multTfIdf(sc, tf, idf):
 
 
 # compute semantic similarity on matrix
+#def computeSemanticSimilarity(item1, item2):
+#    termNum = max(max(item1.keys()), max(item2.keys())) + 1
+#    top, b1, b2 = 0, 0, 0
+#    for i in range(termNum):
+#        try:
+#            item1[i]
+#        except KeyError:
+#            item1[i] = 0
+#        try:
+#            item2[i]
+#        except KeyError:
+#            item2[i] = 0
+#        top += item1[i] * item2[i]
+#        b1 += item1[i] * item1[i]
+#        b2 += item2[i] * item2[i]
+#    try:
+#        result = top / (math.sqrt(b1) * math.sqrt(b2)) 
+#    except ZeroDivisionError as e:
+#        result = 0
+#    return result
+
+
 def computeSemanticSimilarity(item1, item2):
-    termNum = max(max(item1.keys()), max(item2.keys())) + 1
+    keys = set().union(item1.keys(), item2.keys())
     top, b1, b2 = 0, 0, 0
-    for i in range(termNum):
+    for i in keys:
         try:
-            item1[i]
-        except KeyError:
-            item1[i] = 0
+            top += item1[i] * item2[i]
+        except Exception as e:
+            top += 0
+        try: 
+            b1 += item1[i] * item1[i]
+        except Exception as e:
+            b1 += 0
         try:
-            item2[i]
-        except KeyError:
-            item2[i] = 0
-        top += item1[i] * item2[i]
-        b1 += item1[i] * item1[i]
-        b2 += item2[i] * item2[i]
+            b2 += item2[i] * item2[i]
+        except Exception as e:
+            b2 += 0
     try:
         result = top / (math.sqrt(b1) * math.sqrt(b2)) 
     except ZeroDivisionError as e:
         result = 0
-    return result
+    return result 
 
