@@ -1,4 +1,5 @@
-
+# This is the main application. It uses the other modules to perform computations and it uses
+# the results and outputs them to the user
 from datetime import datetime
 from plumbum import local, cli
 import sys
@@ -12,22 +13,25 @@ from compute_semantic_similarity import multTfIdf, computeSemanticSimilarity
 from pyspark import SparkConf, SparkContext
 from convenience import *
 
+
 def whitespace(num):
     for i in range(0, num, 1):
         print()
+
 
 def printRdd(rdd):
     whitespace(4)
     print(rdd.collect())
     whitespace(4)
 
+
 def initApp(master, name):
-    # NOTE: master == 'local', name = 'Semantic Simiarity'
     conf = SparkConf().setMaster(master).setAppName(name)
     return SparkContext(conf=conf)
 
-class SemanticSimilarity: 
 
+class SemanticSimilarity: 
+    
     startTime = None
 
     def printMenu(self):
@@ -35,6 +39,7 @@ class SemanticSimilarity:
               'text: will show all words to perform analysis on\n'
               'retrievetop,<num>,<word>: will output the top n most similar words descending with num of 25\n'
               'help: display this help menu\n')
+
 
     def showAllText(self, rdd):
         items = rdd.collect()
@@ -50,28 +55,30 @@ class SemanticSimilarity:
         def delWord(pair):
             return pair
                 
+
         def createAnalysis(searchWord, pair, small):
             if small:
                 randKey = 1
             else:
-                randKey = random.randint(1, num)
+                randKey = random.randint(1, 5)
             return (randKey, (computeSemanticSimilarity(searchWord[1], pair[1]), pair[0]))
+
         def makeArray(a):
             return [a]
+
         def makePartition(a, b):
             return a + [b]
+
         def stop(a, b):
             return (a + b)
+
         newWord = rdd.reduce(lambda x, y: findWord(x,y))
         if not newWord:
             print('Word not found. Exiting')
             return
         whitespace(4)
-
         wordAmount = rdd.collect()
         wordAmount = len(wordAmount)
-        
-
         smallAnalysis = True if wordAmount < 25 else False
         s = rdd.map(lambda x: createAnalysis(newWord, x, smallAnalysis)) 
         s = s.combineByKey(makeArray, makePartition, stop)
@@ -81,7 +88,6 @@ class SemanticSimilarity:
         else:
             s = s.flatMap(lambda x:  (sorted(x[1], reverse = True)[0:num]))
             s = sorted(s.collect(), reverse=True)[0:num]
-        
         if num > 25:
             print('Truncating to top 25 matches from {0}.'.format(num))
             num = 25
@@ -96,6 +102,7 @@ class SemanticSimilarity:
             i += 1
             counter += 1
         return 
+
 
     def __init__(self, filePath, command, num = None):
         self.startTime = datetime.now()
@@ -132,7 +139,6 @@ class SemanticSimilarity:
             self.printMenu()
             whitespace(4)
         print('Program started at {0} and ended at {1}'.format(self.startTime, datetime.now()))
-
 
 
 if __name__=='__main__':
