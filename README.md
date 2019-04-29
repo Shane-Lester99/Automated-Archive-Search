@@ -1,4 +1,4 @@
-Semantic Similarity
+# Semantic Similarity
 
 ## What is this application?
 
@@ -7,14 +7,22 @@ Semantic Similarity is a natural language processing application meant to automa
 A couple of real world use cases for this application are::
 
 Automating the analysis of customer reviews:
- A company could use this application to see what words are typically associated with their products from large text surveys
-This could limit the need for companies to hire cheap labor to review surveys and automate tedious jobs
+
+- A company could use this application to see what words are typically associated with their products from large text surveys
+
+- This could limit the need for companies to hire cheap labor to review surveys and automate tedious jobs
+
 Voter analytics:
-A campaign manager could see common terms associated with their candidate to inform decision making 
-For example, if the word slimy keeps popping up across social media but ‘hard working’ pops up in certain newspapers, it might give insight to campaign managers on making decisions
-This could be done across social media data, news articles, and any and all raw text data to quickly and objectively see what words are associated with their candidate, political party, or message
-Qualitative sentiment analysis. 
-A research professor can use this application to see the context of a word in a given set of documents. 
+
+- A campaign manager could see common terms associated with their candidate to inform decision making
+
+- For example, if the word slimy keeps popping up across social media but ‘hard working’ pops up in certain newspapers, it might give insight to campaign managers on making decisions
+
+- This could be done across social media data, news articles, and any and all raw text data to quickly and objectively see what words are associated with their candidate, political party, or message
+
+Qualitative sentiment analysis: 
+
+- A research professor can use this application to see the context of a word in a given set of documents. 
 This could be used by a history professor wanting to know terms associated with a particular person of interest across multiple time periods
 
 ## Technologies Used
@@ -27,37 +35,46 @@ First navigate to root directory
 
 Create a virtual environment (and activate it)
 
-Pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 Navigate to directory analysis to use commands below
 
 ## Commands
+This will output all the words which are valid for that text file for an analysis:
 
-spark-submit create_analysis.py ../test/medium_file.txt text // this will output all the words which are valid for that text file for an analysis
+`spark-submit create_analysis.py ../test/medium_file.txt text` 
 
-spark-submit create_analysis.py ../test/medium_file.txt retrievetop,10,feelings // this will analyze the top 10 highest scores for word feelings. The number can be anywhere from 1-25
+This will analyze the top 10 highest scores for word feelings. The number can be anywhere from 1-25:
 
-spark-submit create_analysis.py ../test/medium_file.txt help // will display help menu
+`spark-submit create_analysis.py ../test/medium_file.txt retrievetop,10,feelings`
 
-spark-submit test-analytics // this will run tests on small files to validate correctness of computations. This entire program was built with test driven development in mind, assuring the validity of the analytics
+Will display help menu:
+
+`spark-submit create_analysis.py ../test/medium_file.txt help` 
+
+This will run tests on small files to validate correctness of computations. This entire program was built with test driven development in mind, assuring the validity of the analytics
+
+`spark-submit test-analytics` 
 
 ## Test files
+
 These files are packaged with this application for testing and development purposes: 
 
-demo.txt  small_demo.txt  medium_file.txt  small_demo.txt  small_file.txt bible.txt small_bible.txt
+`demo.txt  small_demo.txt  medium_file.txt  small_demo.txt  small_file.txt bible.txt small_bible.txt`
 
-Small_file.txt is used for testing purposes of computations. This application has automated testing to guarantee the validity of the computations. This file needs to be used for these automated tests. It is a very small file with only 7 words. It takes a few seconds to perform analytics on.
+`Small_file.txt` is used for testing purposes of computations. This application has automated testing to guarantee the validity of the computations. This file needs to be used for these automated tests. It is a very small file with only 7 words. It takes a few seconds to perform analytics on.
 
-medium_file.txt is a slightly larger file of about 16 lines. It was used while developing for rapid development purposes. It takes a few seconds to perform analytics on.
+`medium_file.txt` is a slightly larger file of about 16 lines. It was used while developing for rapid development purposes. It takes a few seconds to perform analytics on.
 
-small_demo.txt has 2000 lines. It is about a quarter of the size of the official demo file. It was used during development for speedier testing then the full size demo file. It takes a few seconds to perform analytics on.
+`small_demo.txt` has 2000 lines. It is about a quarter of the size of the official demo file. It was used during development for speedier testing then the full size demo file. It takes a few seconds to perform analytics on.
 
-demo.txt has 8000 lines and is the official standard for the application. It takes a few minutes to perform the analysis.
+`demo.txt` has 8000 lines and is the official standard for the application. It takes a few minutes to perform the analysis.
 
-Bible.txt has about 100,000 lines and is an example of a real text document this application can analyze. It took about 10 minutes to perform the analysis.
+`Bible.txt` has about 100,000 lines and is an example of a real text document this application can analyze. It took about 10 minutes to perform the analysis.
 
 Also note that these metrics are performed on a macbook pro with these specs:
 
+```
 MacBook Pro (15-inch, 2018)
 Processor: 2.6 GHz Intel Core i7
 Memory: 16 GB 2400 MHz DDR4
@@ -65,6 +82,7 @@ Memory: 16 GB 2400 MHz DDR4
 Running on an Ubuntu VM 18.04.1
 
 Running on localhost default configuration for Spark.
+```
 
 ## Example top 25 analysis for bible.txt and demo.txt
 
@@ -166,14 +184,17 @@ The entire program was written with the constraint of map and reduce functions. 
 
 To begin, we will define a small text file to run through the algorithms defined in the program.
 
+```
 Here is the file:
 small.txt
 I like data science and I, 
 I hate data
 want A
+```
 
 First we want to take this data structure and turn it into a data structure similar to 
 
+```
 col,d1,d2,d3
 I,2,1,0 
 like,1,0,0
@@ -183,6 +204,7 @@ and,0,1,0
 hate.0,1,0
 want 0,0,1
 a0,0,1
+```
 
 The goal here is to lowercase all the text to normalize it and remove the punctuation. Also the goal is to count all the words from each document. The data structure aimed for here will be a list of key value pairs where each key is a word and the value is a dictionary where the key is document number and the value is count
  
@@ -195,6 +217,7 @@ Input: file path of document text file
 
 Takes file and turns it into Data Structure [(line, line number)] with lower case words, no punctuation, and no empty values.
 
+```
 Output:
 [[(i -> 0), 
 (like -> 0) 
@@ -208,9 +231,13 @@ Output:
 (want -> 2)
 (a -> 2)]
 ]
+```
 
 Reducer Input (above):
+
 In the reducer we aim to remove all the internal arrays arrays
+
+```
 [(I -> 0), 
 (Like -> 0) 
 (Data -> 0)
@@ -223,17 +250,23 @@ In the reducer we aim to remove all the internal arrays arrays
 (Want -> 2)
 (A -> 2)]
 ]
+```
+
 Output of reducer:
 We group all of the values in a list like:
+
+```
 I -> 0, 0, 1 
 ...
-
+```
 
 We skip the mapper and use a combiner to finish job. We also skip the reducer. So the mapper passes in a and returns a and there is no reducer needed. Combiner turns the list into a dictionary like below
 
 Combiner:
 
 Output:
+
+```
 I -> {1: 2, 2: 1}
 Like -> {1:1}
 Data ->  {1:1. 2:1}
@@ -242,19 +275,24 @@ And -> {1:1}
 Hate -> {2: 1}
 Want -> {3:1}
 A - > {3:1}
+```
 
 Code implementation:
 
+```
  newRdd =  sc.textFile(textFile).zipWithIndex()
  dc = newRdd.map(lambda x: indexValues(x)).reduce(lambda x,y: x +y)
  dc = sc.parallelize(dc)
  dc = dc.combineByKey(toDict, addKey, stop)
+```
 
 Its implemented in file convience.py
 
 This is similar to a record count mapreduce design pattern. We needed a numerical summarization of word count to document number.
 
 2) Now we  will calculate the tf matrix. With input 
+
+```
 I -> {0: 2, 1: 1}
 Like -> {0:1}
 Data ->  {0:1. 1:1}
@@ -263,9 +301,11 @@ And -> {0:1}
 Hate -> {1: 1}
 Want -> {2:1}
 A - > {2:1}
+```
 
 We want output:
 
+```
 I -> {0: 2/6 , 1: 1/3}
 Like -> {0:1/6}
 Data ->  {0:1/6. 1:1/3}
@@ -274,8 +314,11 @@ And -> {0:1/6}
 Hate -> {1: 1/3}
 Want -> {2:1/2}
 A - > {2: 0.5}
+```
 
-Mapper input 
+Mapper input
+
+```
 I -> {0: 2, 1: 1}
 Like -> {0:1}
 Data ->  {0:1. 1:1}
@@ -284,14 +327,19 @@ And -> {0:1}
 Hate -> {1: 1}
 Want -> {2:1}
 A - > {2:1} 
+```
 
 And the raw input text file: 
 
+```
 I like data science and I, 
 I hate data
 want A
+```
 
 We turn the input file to this like before
+
+```
 [[(I -> 0), 
 (Like -> 0) 
 (Data -> 0)
@@ -304,12 +352,17 @@ We turn the input file to this like before
 (Want -> 2)
 (A -> 2)]
 ]
+```
 
 But we reverse the values and count the words in each reversed list. This is done within mapper, no reduction needed. We also turn it into  a dictionary so we can use it in next calculation. Also note that this is a small data structure and will fit into memory. It will be at most the size of a words value which has been in every document, so it will always fit in memory as a dictionary
 
+```
 {0: 6, 1:3, 2:2}
+```
 
 We then define a mapper on the data structure (RDD)
+
+```
 I -> {0: 2, 1: 1}
 Like -> {0:1}
 Data ->  {0:1. 1:1}
@@ -318,8 +371,11 @@ And -> {0:1}
 Hate -> {1: 1}
 Want -> {2:1}
 A - > {2:1} 
+```
 
 In our mapper we match the keys to make the appropriate calculation and end up with the desired output
+
+```
 I -> {0: 2/6 , 1: 1/3}
 Like -> {0:1/6}
 Data ->  {0:1/6. 1:1/3}
@@ -328,18 +384,23 @@ And -> {0:1/6}
 Hate -> {1: 1/3}
 Want -> {2:1/2}
 A - > {2: 0.5}
+```
 
+```
 I like data science and I, 
 I hate data
 want A
-
+```
 
 This is the code to implement:
+
+```
 newRdd = loadToConvenienceRdd(sc, textFile)
 inMemoryDataStructure = dict(newRdd.map(lambda x: amountOfWordsMap(x)).collect())
 rc = baseDataStructure.map(lambda x: createTfValue(x, inMemoryDataStructure))
+```
 
-It is implemented in tf_matrix.py
+It is implemented in ```tf_matrix.py```
 
 Note that this is similar to a ‘stripes’ mapreduce design pattern. We computed a word count stripe and we processed it across all other stripes in our mapper.
 
@@ -348,6 +409,7 @@ Step 3: Compute idf
 What we want:
 We use existing data structure from step 1 and the raw text data. 
 
+```
 I -> {0: 2, 1: 1}
 Like -> {0:1}
 Data ->  {0:1. 1:1}
@@ -356,9 +418,11 @@ And -> {0:1}
 Hate -> {1: 1}
 Want -> {2:1}
 A - > {2:1} 
+```
 
 We compute the amount of lines from the raw text, here it is 3 and we update the data structure. We also sum up the values to see how many words appeared across document.
 
+```
 I -> {0: 2, 1: 1}
 Like -> {0:1}
 Data ->  {0:1. 1:1}
@@ -367,14 +431,16 @@ And -> {0:1}
 Hate -> {1: 1}
 Want -> {2:1}
 A - > {2:1} 
+```
 
 ->
 
+```
 I -> {0: 3/3, 1: 3/3}
 Like -> {0:1/3}
 Data ->  {0:2/3. 1:2/3}
 ...
-
+```
 
 We get this by using a mapper and reducer to get the amount of documents across. We first replace each document with 1 in the mapper and then sum them up in the reducer. This gives us the number of documents. This is done in a function called norm in the program. It uses a count mapreduce design pattern
 
@@ -382,9 +448,11 @@ Then a map is used on each value in the data structure from step 1 to perform si
 
 
 This is how the function looks in code:
+```
 newRdd = loadToConvenienceRdd(sc, textFile)
 sizeOfSet = newRdd.map(lambda x: norm(x)).reduce(lambda x, y: x+y)
 idf = baseDataStructure.map(lambda x: create(x, sizeOfSet))
+```
 
 It is implemented in file idf_matrix.py
 
@@ -396,6 +464,8 @@ We already have the two existing data structures, just output both of them to re
 Output: two existing data structures
 
 Reducer: input is our two existing data structures post map (from step 2 and step 3).
+
+```
 tf = 
 I -> {1: 2/6, 2: 1/4}
 Like -> {1:1/6}
@@ -414,8 +484,11 @@ And ->  log(3)
 Hate -> log(3) 
 Want -> log(3) 
 A - > log(3) 
+```
+
 
 Reducer: output
+```
 tf*idf = 
 I -> {1: log(1)2/6, 2: log(1)1/4}
 Like -> {1:log(3)1/6}
@@ -424,6 +497,7 @@ And -> {1: log(3)1/6}
 Hate -> {2: log(3)1/4}
 Want -> {3: log(3)1/2}
 A - > {3: log(3)1/2}
+```
 
 All we do is reduce the two data structures by key and perform the analytics on
 
@@ -433,11 +507,12 @@ This algorithm was written with the join mapreduce design pattern in mind.
 
 Step 5: Compute similarities for each term and retrieve top N results.
 
- For example, we use term with key Like (but remember we will repeat this term for all keys)
+For example, we use term with key Like (but remember we will repeat this term for all keys)
 
 Mapper:
 Performing the computation S(like, term) on each word, reverse the output with the name, and give it a new key that is a random number from 1- 5 
 
+```
 I -> {1: log(1)2/6, 2: log(1)1/4}
 Data ->  {1: log(3/2)1/6. 2: log(3/2)1/4}
 And -> {1: log(3)1/6}
@@ -448,7 +523,7 @@ A - > {3: log(3)1/2}
 to:
 (1, (S(like, I), like))
 ...
-
+```
 
 We then used combiner to combine the random keys to create local lists. We then aggregated to the top N of each list as we sorted each list. After our combiner we flatmap the list, sort it, and have the top 25 results.
 
