@@ -1,8 +1,10 @@
+# Functions here used to compute the semantic similarity
 import math
 
 
 def passNow(pair):
     return pair
+
 
 def merge(x, y):
     newDict = {}
@@ -11,7 +13,6 @@ def merge(x, y):
     return newDict
 
 
-# multiply tf * idf 
 def multTfIdf(sc, tf, idf): 
     shared = tf.map(lambda x: passNow(x)) 
     shared += idf.map(lambda x: passNow(x))
@@ -19,7 +20,9 @@ def multTfIdf(sc, tf, idf):
     return mult
 
 
-# compute semantic similarity on matrix
+# This is an old implementation that was so inefficient it broke the program. 
+# It is commented out for demo purposes.
+
 #def computeSemanticSimilarity(item1, item2):
 #    termNum = max(max(item1.keys()), max(item2.keys())) + 1
 #    top, b1, b2 = 0, 0, 0
@@ -42,6 +45,7 @@ def multTfIdf(sc, tf, idf):
 #    return result
 
 
+# This is solution to the above inefficent algorithm.
 def computeSemanticSimilarity(item1, item2):
     keys = set().union(item1.keys(), item2.keys())
     top, b1, b2 = 0, 0, 0
@@ -63,4 +67,3 @@ def computeSemanticSimilarity(item1, item2):
     except ZeroDivisionError as e:
         result = 0
     return result 
-
