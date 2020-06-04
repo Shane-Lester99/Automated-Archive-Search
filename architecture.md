@@ -1,4 +1,4 @@
-## Technologies Used
+## Technology Used
 
 This application is implemented using python and spark via the pyspark API. Natural language processing is a computationally intensive operation so this application utilizes sparks parallelization of data processing to efficiently analyze large text documents and extract insight fast. Python is fast to implement because of its lack of verbosity, so it was chosen for rapid prototyping and ease of use given the pyspark api.
 
