@@ -1,6 +1,6 @@
 # Automated Archive Search
 
-Automated Archive Search is a natural language processing data pipeline meant to automate the process of finding the top k most similar terms in large text documents given a search term. It is excellent for searching massive archives at rapid speeds for semantic similarity.
+Automated Archive Search is a natural language processing data pipeline to find and score the top k most similar terms to a search word by semantic similarity in a  collection of large text documents. It is excellent for searching massive archives at rapid speeds because of its use of PySpark's automated distributed processing and uses the famous web algorithm "term frequency - inverse document frequency" for massive text processing.
 
 Some uses where Automated Archive Search  could do the trick:
 
