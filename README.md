@@ -1,12 +1,12 @@
 # Automated Archive Search
 
-Automated Archive Search is a natural language processing data pipeline to find and score the top k most similar terms to a search word by semantic similarity in a  collection of large text documents. It is excellent for searching massive archives at rapid speeds because of its use of PySpark's automated distributed processing and uses the web textual analytics algorithm "term frequency - inverse document frequency" for massive text processing.
+Automated Archive Search is a natural language processing data pipeline to find and score the top k most similar terms to a search word by semantic similarity in a  collection of large text documents. It is excellent for searching massive archives at rapid speeds because of its use of PySpark's automated distributed processing and uses the web textual analytics algorithm "term frequency-inverse document frequency" for massive text processing.
 
 Some uses where Automated Archive Search  could do the trick:
 
 Automating the analysis of customer reviews:
 
-- A company could use this application to see what words are typically associated with their products from large text surveys
+- A company could use this application to see what words are typically associated with its products from large text surveys
 
 - This could limit the need for companies to hire cheap labor to review surveys and automate tedious jobs
 
@@ -14,14 +14,14 @@ Voter analytics:
 
 - A campaign manager could see common terms associated with their candidate to inform decision making
 
-- For example, if the word slimy keeps popping up across social media but ‘hard working’ pops up in certain newspapers, it might give insight to campaign managers on making decisions
+- For example, if the word slimy keeps popping up across social media but ‘hard-working’ pops up in certain newspapers, it might give insight to campaign managers on making decisions
 
-- This could be done across social media data, news articles, and any and all raw text data to quickly and objectively see what words are associated with their candidate, political party, or message
+- This could be done across social media data, news articles, and any raw text data to quickly and objectively see what words are associated with their candidate, political party, or message
 
 Qualitative sentiment analysis: 
 
 - A research professor can use this application to see the context of a word in a given set of documents. 
-This could be used by a history professor wanting to know terms associated with a particular person of interest across multiple time periods
+This could be used by a history professor wanting to know terms associated with a particular person of interest across multiple periods
 
 ## Example
 
@@ -63,10 +63,10 @@ output:
 
 ## System architecture and how to use
 
-Please review "arcitecture.md" to learn the libraries, frameworks, data structures, and algorithms in Automated Archive Search and "how_to_use.md" to understand how to setup and give commands to this application.
+Please review "architecture.md" to learn the libraries, frameworks, data structures, and algorithms in Automated Archive Search and "how_to_use.md" to understand how to set up and give commands to this application.
 
 ## Current State Of Project
 
-All the core logic has been implemented. It is currently a command line application. A lightweight interface would make this application much more accessible and would be fast and easy for a frontend developer to implement.
+All the core logic has been implemented. It is currently a command-line application. A lightweight interface would make this application much more accessible and would be fast and easy for a frontend developer to implement.
 
 The last major update was in May 2019.
